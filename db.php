@@ -22,5 +22,23 @@ class DB
 		}
 	}
 
-	
+	public function get($page,$collection){
+
+		$currentPage = $page;
+		$articlesPerPages = $this->limit;
+
+		$skip = ($currentPage - 1) * $articlesPerPages;
+
+		$table = $this->db->selectCollection($collection);
+
+		$cursor = $table->find();
+
+		$totalArticles = $cursor->count();
+		$totalPages = (int) ceil($totalArticles / $articlesPerPages);
+		$cursor->sort(array('date' => -1 ))->skip($skip)->limit($articlesPerPages);
+
+		$data = array($currentPage,$totalPages,$cursor);
+
+		return $data;
+	}
 }
